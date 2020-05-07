@@ -55,9 +55,7 @@ public class MyRealm extends AuthorizingRealm {
         if (roleService == null) {
             this.roleService = SpringContextBeanService.getBean(IRoleService.class);
         }
-
-        String userNo = JWTUtil.getUserNo(principals.toString());
-        User user = userService.selectById(userNo);
+        User user =(User) principals.asList().get(0);
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
         if(null != user){
             UserToRole userToRole = userToRoleService.selectByUserNo(user.getUserNo());
