@@ -23,7 +23,7 @@ public class ResponseModel<T> implements Serializable {
         response.setCharacterEncoding("UTF-8");
     }
 
-    public ResponseModel(T result, String message, String code) {
+    public ResponseModel(T result, String code, String message) {
         this.result = result;
         this.message = message;
         this.code = code;
