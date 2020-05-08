@@ -97,9 +97,8 @@ public class ShiroConfig {
     @Autowired
     Environment ev ;
 
-    public Map<String, String> getUrlAndMethodSet(){
+public Map<String, String> getUrlAndMethodSet(){
         String scanPackage = ev.getProperty("scanPackage");
-        String contextPath = ev.getProperty("server.servlet.context-path");
         Reflections reflections = new Reflections(scanPackage);
         Set<Class<?>> classesList = reflections.getTypesAnnotatedWith(Controller.class);
         classesList.addAll(reflections.getTypesAnnotatedWith(RestController.class));
@@ -120,31 +119,31 @@ public class ShiroConfig {
                         if(ComUtil.isEmpty(methodUrl)){
                             methodUrl=method.getAnnotation(PostMapping.class).path();
                         }
-                        baseUrl=getRequestUrl(classUrl, methodUrl, sb,contextPath);
+                        baseUrl=getRequestUrl(classUrl, methodUrl, sb);
                     }else if(!ComUtil.isEmpty(method.getAnnotation(GetMapping.class))){
                         methodUrl=method.getAnnotation(GetMapping.class).value();
                         if(ComUtil.isEmpty(methodUrl)){
                             methodUrl=method.getAnnotation(GetMapping.class).path();
                         }
-                        baseUrl=getRequestUrl(classUrl, methodUrl, sb,contextPath);
+                        baseUrl=getRequestUrl(classUrl, methodUrl, sb);
                     }else if(!ComUtil.isEmpty(method.getAnnotation(DeleteMapping.class))){
                         methodUrl=method.getAnnotation(DeleteMapping.class).value();
                         if(ComUtil.isEmpty(methodUrl)){
                             methodUrl=method.getAnnotation(DeleteMapping.class).path();
                         }
-                        baseUrl=getRequestUrl(classUrl, methodUrl, sb,contextPath);
+                        baseUrl=getRequestUrl(classUrl, methodUrl, sb);
                     }else if(!ComUtil.isEmpty(method.getAnnotation(PutMapping.class))){
                         methodUrl=method.getAnnotation(PutMapping.class).value();
                         if(ComUtil.isEmpty(methodUrl)){
                             methodUrl=method.getAnnotation(PutMapping.class).path();
                         }
-                        baseUrl=getRequestUrl(classUrl, methodUrl, sb,contextPath);
+                        baseUrl=getRequestUrl(classUrl, methodUrl, sb);
                     }else {
                         methodUrl=method.getAnnotation(RequestMapping.class).value();
-                        baseUrl=getRequestUrl(classUrl, methodUrl, sb,contextPath);
+                        baseUrl=getRequestUrl(classUrl, methodUrl, sb);
                     }
                     if(!ComUtil.isEmpty(baseUrl)){
-                        filterRuleMap.put(baseUrl,"anon");
+                        filterRuleMap.put( baseUrl.replaceAll("\\{[^}]*\\}", "**") ,"anon");
                     }
                 }
             }
@@ -154,10 +153,8 @@ public class ShiroConfig {
         return filterRuleMap;
     }
 
-    private String  getRequestUrl(String[] classUrl, String[] methodUrl, StringBuilder sb,String contextPath) {
-        if(!ComUtil.isEmpty(contextPath)){
-            sb.append(contextPath);
-        }
+    private String  getRequestUrl(String[] classUrl, String[] methodUrl, StringBuilder sb) {
+
         if(!ComUtil.isEmpty(classUrl)){
             for (String url:classUrl) {
                 sb.append(url+"/");
